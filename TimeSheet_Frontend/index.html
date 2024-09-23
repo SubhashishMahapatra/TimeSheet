@@ -1,109 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Timesheet</title>
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      .container {
-        max-width: 1200px;
-        margin: auto;
-        padding: 20px;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timesheet</title>
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
 
-      h1 {
-        text-align: center;
-        margin-bottom: 20px;
-      }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-      #form {
-        border: 1px solid #ddd;
-        padding: 20px;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-      }
+    #form {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
 
-      .activity-form {
-        margin-bottom: 20px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #ffffff;
-      }
+    .activity-form {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #ffffff;
+      position: relative;
+    }
 
-      .activity-form h3 {
-        font-size: 1.2rem;
-        margin-bottom: 10px;
-      }
+    .activity-form h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
 
-      .form-control {
-        margin-bottom: 15px;
-      }
+    .form-control,
+    .form-select {
+      margin-bottom: 15px;
+    }
 
-      .action-buttons {
-        text-align: right;
-      }
+    .action-buttons {
+      text-align: right;
+    }
 
-      .action-buttons button {
-        margin-right: 10px;
-      }
+    .action-buttons button {
+      margin-left: 10px;
+    }
 
-      .hours-container {
-        display: flex;
-        gap: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Add Timesheets</h1>
-      <form id="form" class="row">
-        <!-- Date and Leave Section -->
-        <div class="col-md-2">
-          <label for="date">Date</label>
-          <input
-            type="date"
-            id="date"
-            class="form-control"
-            placeholder="dd-mm-yyyy"
-          />
-        </div>
-        <div class="col-md-2">
-          <label for="on-leave">On Leave</label>
-          <select id="on-leave" class="form-select">
-            <option value="false">No</option>
-            <option value="true">Yes</option>
-          </select>
-        </div>
-
-        <div id="activity-container" class="mt-4"></div>
+    .remove-activity {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Add Timesheets</h1>
+    <form id="form" class="row">
+      <!-- Date and Leave Section -->
+      <div class="col-md-2">
+        <label for="date" class="form-label">Date</label>
+        <input
+          type="date"
+          id="date"
+          class="form-control"
+          placeholder="dd-mm-yyyy"
+          required
+        />
+      </div>
+      <div class="col-md-2">
+        <label for="on-leave" class="form-label">On Leave</label>
+        <select id="on-leave" class="form-select" required>
+          <option value="">Select Option</option>
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
       </div>
 
-        <!-- Add Activity Button -->
-        <div class="col-md-12 text-end mt-3">
-          <button type="button" id="add-activity" class="btn btn-primary">
-            Add Activity
-          </button>
+      <div id="activity-container" class="mt-4 col-md-12"></div>
+
+      <!-- Add Activity Button -->
+      <div class="col-md-12 text-end mt-3">
+        <button type="button" id="add-activity" class="btn btn-primary">
+          Add Activity
+        </button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="col-md-12 mt-4 action-buttons">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" id="preview-btn" class="btn btn-success">
+          Preview
+        </button>
+        <button type="button" id="cancel-btn" class="btn btn-danger">
+          Cancel
+        </button>
+      </div>
+    </form>
+
+    <!-- Bootstrap Modal for Preview -->
+    <div
+      class="modal fade"
+      id="previewModal"
+      tabindex="-1"
+      aria-labelledby="previewModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="previewModalLabel">Timesheet Preview</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body" id="preview-content">
+            <!-- Preview content will be injected here -->
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <!-- Action Buttons -->
-        <div class="col-md-12 mt-4 action-buttons">
-          <button type="submit" class="btn btn-primary">Submit</button>
-          <button type="button" class="btn btn-success">Preview</button>
-          <button type="button" class="btn btn-danger">Cancel</button>
-        </div>
-      </form>
-
-      <!-- Activity Forms will be added here -->
-     
-
-    <script src="script.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Your Custom Script -->
+  <script src="script.js"></script>
+</body>
 </html>
